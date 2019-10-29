@@ -3,11 +3,11 @@
   <div class="container">
     <el-card>
       <img src="../../assets/logo_index.png" alt />
-      <el-form ref="form" :model="LoginForm">
-        <el-form-item>
+      <el-form ref="LoginForm" :model="LoginForm" :rules="LoginRules" status-icon>
+        <el-form-item prop="moblie">
           <el-input v-model="LoginForm.moblie" placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="code">
           <el-input
             v-model="LoginForm.code"
             style="width:67%;margin-right:5px"
@@ -19,7 +19,7 @@
           <el-checkbox :value="true">我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="width:100%;">登录</el-button>
+          <el-button type="primary" @click="login" style="width:100%;">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -29,11 +29,47 @@
 <script>
 export default {
   data () {
+    const checkMoblie = (rule, value, callback) => {
+      if (/^1[3-9]\d{9}$/.test(value)) {
+        callback()
+      } else {
+        callback(new Error('手机号格式不对'))
+      }
+    }
     return {
       LoginForm: {
-        mobile: '',
+        moblie: '',
         code: ''
+      },
+      LoginRules: {
+        moblie: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: checkMoblie, trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { len: 6, message: '验证码错误', trigge: 'blur' }
+        ]
       }
+    }
+  },
+  methods: {
+    login () {
+      this.$refs['LoginForm'].validate(valid => {
+        if (valid) {
+          this.$http
+            .post('authorizations', this.LoginForm)
+            .then(res => {
+              this.$router.push('/')
+            })
+            .catch(() => {
+              this.$message.error('手机号或密码有误')
+            })
+        } else {
+          console.log('登录无效，请重新登录')
+          return false
+        }
+      })
     }
   }
 }
