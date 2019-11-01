@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import local from '@/utils/local'
 export default {
   data () {
     const checkMoblie = (rule, value, callback) => {
@@ -55,11 +56,15 @@ export default {
   },
   methods: {
     login () {
+      // 对整个表单进行验证
       this.$refs['LoginForm'].validate(valid => {
         if (valid) {
           this.$http
             .post('authorizations', this.LoginForm)
             .then(res => {
+              // 成功res是响应对象 res.data是响应主体
+              // 保存用户信息（token）
+              local.setUser(res.data.data)
               this.$router.push('/')
             })
             .catch(() => {
