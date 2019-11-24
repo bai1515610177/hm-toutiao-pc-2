@@ -1,16 +1,12 @@
 <template>
-  <div class="container">
-    <img src="../../assets/welcome.jpg" alt />
+  <div class="container-article">
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+}
 </script>
 
 <style  scoped lang='less'>
-img {
-  display: block;
-  margin: 0 auto;
-}
 </style>
